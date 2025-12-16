@@ -1,0 +1,58 @@
+---
+kind: pipeline
+type: kubernetes
+name: default
+steps:
+- name: lint
+  image: golangci/golangci-lint:v1.54.2-alpine
+  commands:
+    - golangci-lint run --timeout 10m
+  when:
+    target:
+      exclude:
+      - production
+- name: test
+  image: golang:1.22
+  commands:
+    - apt-get update
+    - apt install -y postgresql
+    - adduser usertests
+    - su usertests -c "go mod download"
+    - su usertests -c "go test ./... -cover"
+  when:
+    target:
+      exclude:
+      - production
+- name: build
+  image: plugins/docker
+  settings:
+    registry: http://registry.container-registry:5000
+    repo: registry.container-registry:5000/survey-bot
+    tags: latest
+    insecure: true
+    mtu: 1000
+  when:
+    target: 
+    - production
+- name: deploy
+  image: localhost:32000/drone-kubectl:latest
+  pull: if-not-exists
+  settings:
+    k8s_server:
+      from_secret: k8s_server
+    k8s_token:
+      from_secret: k8s_token
+    k8s_ca_crt:
+      from_secret: k8s_ca_crt
+    k8s_skip_tls: false
+    namespace: default
+    templates:
+      - ./prod.yaml
+    app_name: ${DRONE_REPO_NAME}
+  commands:
+    - apt-get update
+    - apt-get -y install gettext-base
+    - DRONE_TAG=${DRONE_TAG} envsubst < ./kubernetes/app.yaml | kubectl apply -f -
+  when:
+    target: 
+    - production

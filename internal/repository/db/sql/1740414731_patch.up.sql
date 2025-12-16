@@ -1,0 +1,5 @@
+DO $$ BEGIN
+    ALTER TABLE users ADD last_activity TIMESTAMPTZ NOT NULL DEFAULT '2000-01-01 01:01:01.000000+00';
+EXCEPTION
+    WHEN duplicate_column THEN null;
+END $$;

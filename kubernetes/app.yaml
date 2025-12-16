@@ -1,0 +1,65 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: survey-bot
+  name: survey-bot
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: survey-bot
+  template:
+    metadata:
+      labels:
+        app: survey-bot
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "7777"
+    spec:
+      containers:
+      - env:
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mysecrets
+              key: survey_bot_secret_key
+              optional: false
+        - name: ADMIN_USER_ID
+          valueFrom:
+            secretKeyRef:
+              name: mysecrets
+              key: survey_bot_admin_user_ids
+              optional: false
+        - name: ENV
+          value: prod
+        - name: DB_HOST
+          value: survey-bot-db
+        - name: DB_USER
+          value: postgres
+        - name: DB_PWD
+          value: postgres
+        - name: DB_NAME
+          value: postgres
+        - name: SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              name: mysecrets
+              key: survey_bot_sentry_dsn
+              optional: false
+        - name: RELEASE_VERSION
+          value: ${DRONE_TAG}
+        - name: LEVEL
+          value: info
+        - name: API_PORT
+          value: "80"
+        - name: ALLOWED_ORIGINS
+          value: "https://sv.ykonkov.com" 
+        image: localhost:32000/survey-bot:latest
+        imagePullPolicy: Always
+        name: survey-bot
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 0

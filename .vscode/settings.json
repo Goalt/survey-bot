@@ -1,0 +1,39 @@
+{
+    "window.title": "survey-bot",
+
+    // Go Linter
+    "go.lintTool":"golangci-lint",
+    "go.lintFlags": [
+        "--fast"
+    ],
+    "go.testTimeout": "3000s",
+
+    // UML Preview
+    "plantuml.server": "https://www.plantuml.com/plantuml",
+
+
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "postgres",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "local",
+            "database": "postgres",
+            "username": "postgres",
+            "password": "postgres"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "prod",
+            "database": "postgres",
+            "username": "postgres",
+            "password": "postgres"
+        },
+    ],
+
+    "gitlens.currentLine.enabled": false
+}

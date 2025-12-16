@@ -1,0 +1,1 @@
+ALTER TABLE surveys DROP calculations_type;
