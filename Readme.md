@@ -1,6 +1,6 @@
 [![Build Status](https://drone.ykonkov.com/api/badges/ykonkov/survey-bot/status.svg)](https://drone.ykonkov.com/ykonkov/survey-bot)
 
-# Survey Bot
+# Survey Bot 
 
 A sophisticated Telegram bot designed for conducting psychological surveys and assessments with automated result processing and analysis. 
 
